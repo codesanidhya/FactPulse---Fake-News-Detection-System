@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactPulse</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family: Arial, sans-serif;}
+
+body{
+background: linear-gradient(180deg,#0f172a,#020617);
+color:white;
+overflow-x:hidden;
+}
+
+/* HEADER */
+.header{text-align:center;padding:80px 20px 40px;animation:fadeIn 1.2s ease;}
+
+.logo{
+font-size:64px;font-weight:bold;
+background: linear-gradient(90deg,#38bdf8,#a78bfa);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+transition:.4s;cursor:pointer;
+}
+.logo:hover{transform:scale(1.05);text-shadow:0 0 25px rgba(99,102,241,.8);}
+
+/* ⭐ SEARCH BAR CONNECTED */
+.search-box{margin-top:25px;display:flex;justify-content:center;}
+.search-box input{
+width:420px;padding:16px 20px;border-radius:40px;border:none;outline:none;
+font-size:16px;background:#1e293b;color:white;
+box-shadow:0 0 25px rgba(99,102,241,0.5);transition:.35s;
+}
+.search-box input:focus{transform:scale(1.04);box-shadow:0 0 35px rgba(56,189,248,.9);}
+.search-box button{
+margin-left:10px;padding:14px 20px;border:none;border-radius:30px;
+background:linear-gradient(90deg,#38bdf8,#6366f1);color:white;cursor:pointer;
+}
+
+/* TRENDING */
+.section{padding:60px 8%;animation:fadeUp 1s ease;}
+.section h2{text-align:center;margin-bottom:20px;font-size:32px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;}
+
+.card{
+background:rgba(30,41,59,.8);border-radius:14px;overflow:hidden;transition:.4s;
+cursor:pointer;backdrop-filter:blur(10px);position:relative;
+}
+.card:hover{transform:translateY(-10px) scale(1.03);box-shadow:0 20px 40px rgba(0,0,0,.5);}
+.card img{width:100%;height:160px;object-fit:cover;}
+.card-body{padding:15px;}
+.badge{
+background:linear-gradient(90deg,#38bdf8,#6366f1);
+padding:4px 10px;font-size:12px;border-radius:6px;
+}
+
+/* ABOUT */
+.about{padding:70px 12%;background:#020617;text-align:center;}
+.about h2{font-size:34px;margin-bottom:20px;}
+.about-text{max-width:750px;margin:auto;color:#cbd5f5;line-height:1.7;}
+.features{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+.feature{background:#1e293b;padding:20px;border-radius:12px;transition:.35s;cursor:pointer;}
+.feature:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 15px 30px rgba(56,189,248,.4);}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<div class="logo">FactPulse</div>
+
+<!-- ⭐ SEARCH CONNECTED TO FLASK -->
+<form class="search-box" method="POST" action="/search">
+<input type="text" name="topic" placeholder="Search global news..." required>
+<button type="submit">Search</button>
+</form>
+</div>
+
+<!-- TRENDING -->
+<div class="section">
+<h2>🌍 Trending Around the Globe</h2>
+<div class="grid" id="trendingGrid"></div>
+</div>
+
+<!-- ABOUT -->
+<div class="about">
+<h2>🧠 What is FactPulse?</h2>
+<p class="about-text">
+FactPulse is an AI‑powered news intelligence platform that helps users see beyond headlines.
+Using sentiment analysis, fake‑news detection, and AI summarization, FactPulse transforms raw
+news into meaningful insights so users can quickly understand credibility, tone, and global impact.
+</p>
+
+<div class="features">
+<div class="feature">
+<h3>⚡ AI Summaries</h3>
+<p>Instantly understand news with concise AI explanations.</p>
+</div>
+
+<div class="feature">
+<h3>🔍 Fake News Detection</h3>
+<p>Machine learning models evaluate credibility and confidence.</p>
+</div>
+
+<div class="feature">
+<h3>📊 Sentiment Insights</h3>
+<p>Track emotional tone and bias across media coverage.</p>
+</div>
+
+<div class="feature">
+<h3>🌍 Global Trends</h3>
+<p>Monitor trending global events with real‑time analytics.</p>
+</div>
+</div>
+
+<script>
+async function loadTrending(){
+try{
+const res = await fetch("/trending");
+const news = await res.json();
+
+const grid = document.getElementById("trendingGrid");
+grid.innerHTML="";
+
+news.forEach(n=>{
+grid.innerHTML+=`
+<div class="card" onclick="window.open('${n.url}','_blank')">
+<img src="${n.image}" onerror="this.src='https://picsum.photos/400/300'">
+<div class="card-body">
+<span class="badge">${n.source}</span>
+<h3>${n.title}</h3>
+</div>
+</div>`;
+});
+}catch(e){console.error(e);}
+}
+loadTrending();
+</script>
+
+</body>
+</html>
